@@ -147,10 +147,12 @@ func main() {
 			rset, err := stmtQry.Qry()
 			defer stmtQry.Close()
 			if err != nil {
-				panic(err)
+				log.Fatalln(sqlstmt, err)
 			}
+			if header {
 			if err := w.Write(rset.ColumnNames); err != nil {
 				log.Fatalln("error writing record to csv:", err)
+			}
 			}
 			for rset.Next() {
 				if err := w.Write(row2string(rset.Row)); err != nil {
@@ -176,8 +178,10 @@ func main() {
 				panic(err)
 			}
 			if rset.IsOpen() {
+			if header {
 				if err := w.Write(rset.ColumnNames); err != nil {
 					log.Fatalln("error writing record to csv:", err)
+				}
 				}
 				for rset.Next() {
 					if err := w.Write(row2string(rset.Row)); err != nil {
