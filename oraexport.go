@@ -63,7 +63,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{Name: "user, u", Destination: &user, EnvVar: "ORADB_USER"},
 		cli.StringFlag{Name: "password, p", Destination: &password, EnvVar: "ORADB_PASSWORD"},
-		cli.StringFlag{Name: "connect, c", Destination: &dblink, EnvVar: "ORADB_CONNECT", Usage: "example: \"localhost:1524/MIS.OK.AERO\""},
+		cli.StringFlag{Name: "connect, c", Destination: &dblink, EnvVar: "ORADB_CONNECT", Usage: "example: \"host:port/service_name\""},
 		cli.BoolFlag{Name: "withHeader", Destination: &header, Usage: "The first line are column names of the query/cursor"},
 		cli.BoolFlag{Name: "useCRLF", Destination: &useCRLF, Usage: "Lines are delimited by CRLF instead of LF"},
 		cli.StringFlag{Name: "delimiter, d", Value: ",", Destination: &comma, Usage: "example: \"\\t\" for tab "},
@@ -150,9 +150,9 @@ func main() {
 				log.Fatalln(sqlstmt, err)
 			}
 			if header {
-			if err := w.Write(rset.ColumnNames); err != nil {
-				log.Fatalln("error writing record to csv:", err)
-			}
+				if err := w.Write(rset.ColumnNames); err != nil {
+					log.Fatalln("error writing record to csv:", err)
+				}
 			}
 			for rset.Next() {
 				if err := w.Write(row2string(rset.Row)); err != nil {
@@ -178,10 +178,10 @@ func main() {
 				panic(err)
 			}
 			if rset.IsOpen() {
-			if header {
-				if err := w.Write(rset.ColumnNames); err != nil {
-					log.Fatalln("error writing record to csv:", err)
-				}
+				if header {
+					if err := w.Write(rset.ColumnNames); err != nil {
+						log.Fatalln("error writing record to csv:", err)
+					}
 				}
 				for rset.Next() {
 					if err := w.Write(row2string(rset.Row)); err != nil {
